@@ -29,16 +29,31 @@ class Tela:
 	def atualizarTela(self):
 		pygame.display.flip()
 
+velocidadeBola = 0.75
+velCord = [velocidadeBola, velocidadeBola]
+
 class Bola:
+	tela = Tela()
 	def __init__(self):
 		self.ball = 0;
 		self.default_image_size = (0,0);
 		self.ballrect = 0;
+		self.pos_x = 0
+		self.pos_y = 0
+
+	def move(self, velBola):
+		if ((self.ballrect.left < 0) or (self.ballrect.right > tela.width)):
+			self.pos_x += -velBola
+		if ((self.ballrect.top < 0) or (self.ballrect.bottom > tela.height)):
+			self.pos_y += -velBola
+
+		return [self.pos_x, self.pos_y]
 
 	def ballLoad(self):
 		self.ball = pygame.image.load("intro_ball.gif")
 		self.default_image_size = (45, 45)
 		self.ball = pygame.transform.scale(self.ball, self.default_image_size)
+		self.pos = (5,5)
 		return self.ball
 
 	def ballRect(self, arg='unset'):
@@ -47,23 +62,23 @@ class Bola:
 			print('ARG IS NOT SET')
 			return self.ballrect
 		else:
-			self.ballrect = arg.get_rect()
-			print('ARG IS SET')
-			return self.ballrect
+			if (type(arg) == 'list'):
+				print('Array')
+				pygame.quit()
+				# self.ballrect = arg.get_rect(arg[0], arg[1])
+				# print('ARG IS SET')
+				# return self.ballrect
+			else:
+				self.ballrect = arg.get_rect(top = 0, left = 0, width=45, height=45)
+				print(self.ballrect)
+				return self.ballrect
 
 	def createBall(self): 
 		self.ballLoad()
 		self.ballRect(self.ball)
 
 	def blitBall(self):
-		# tela = Tela()
-		# self.ballrect.move(velocidadeBola)
-		# if (self.ballrect.left <0) or (self.ballrect.right > tela.width):
-		#  	velocidadeBola = -velocidadeBola
-    	# if (self.ballrect.top < 0) or (self.ballrect.bottom > tela.height):
-        # 	velocidadeBola = -velocidadeBola
 		tela.blitt(self.ballLoad(), self.ballRect(self.ball))
-
 		# return 0
 
 
@@ -149,5 +164,6 @@ while execucao:
 	tabua.desenharTabua()
 	gameConfig.VerifyBorder()
 	bola.blitBall()
+	bola.move(velCord)
 	tabua.move(moveAct)
 	tela.atualizarTela()
