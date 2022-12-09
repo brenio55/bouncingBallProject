@@ -31,21 +31,34 @@ class Tela:
 
 class Bola:
 	tela = Tela()
-	def __init__(self):
+	def __init__(self, velBola : int):
 		self.ballFile = 0;
 		self.default_image_size = (0,0);
 		self.ballrect = self.ballLoad().get_rect();
-		self.pos_x = 0
-		self.pos_y = 0
+		self.pos_x = 1
+		self.pos_y = 1
 
-	def move(self, velBola : int):
-		if ((self.ballrect.left < 0) or (self.ballrect.right > tela.width)):
-			self.pos_x += -velBola
-		if ((self.ballrect.top < 0) or (self.ballrect.bottom > tela.height)):
-			self.pos_y += -velBola
+	def move(self):
+		# if ((self.ballrect.left < 0) or (self.ballrect.right > tela.width)):
+		# 	self.pos_x += -velBola
+		# if ((self.ballrect.top < 0) or (self.ballrect.bottom > tela.height)):
+		# 	self.pos_y += -velBola
 
-		self.pos_x += velBola
-		self.pos_y += velBola
+		if self.pos_x > tela.width - 45:
+			print('verificado LR')
+			self.pos_x += velocidadeBola
+
+		if  self.pos_x < 0:
+			self.pos_x += -velocidadeBola
+
+		if self.pos_y <= 0:
+			self.pos_y += velocidadeBola
+
+		if self.pos_y >= tela.height:
+			self.pos_y += -velocidadeBola
+
+		self.pos_x += velocidadeBola
+		self.pos_y += velocidadeBola
 
 		return [self.pos_x, self.pos_y]
 
@@ -56,10 +69,8 @@ class Bola:
 		self.pos = (5,5)
 		return self.ballObj
 
-	# self.ballrect = arg.get_rect(top = topLeft[1], left = topLeft[0], width=45, height=45)
-
 	def blitBall(self):
-		ballMove = self.move(velocidadeBola)
+		ballMove = self.move()
 		ballX = ballMove[0]
 		ballY = ballMove[1]
 
@@ -131,12 +142,13 @@ class GameConfig:
 tabua = Tabua()
 tela = Tela()
 gameConfig = GameConfig()
-bola = Bola()
 #variaveis de execução
 execucao = True
 velocidadeX = 0.7
-velocidadeBola = 0.3
+velocidadeBola = 0.5
+
 ################################ main #########################
+bola = Bola(velocidadeBola)
 tela.iniciarTela()
 moveAct = 0;
 
