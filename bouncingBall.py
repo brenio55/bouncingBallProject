@@ -33,66 +33,8 @@ class Tela:
 	def atualizarTela(self):
 		pygame.display.flip()
 
-class Bola:
-	tela = Tela()
-	def __init__(self, velBola : int):
-		self.ballFile = 0;
-		self.default_image_size = (0,0);
-		# self.ballrect = self.ballLoad().get_rect();
-		self.pos_x = 1
-		self.pos_y = 1
-		
-		self.TOP = 0
-		self.BOTTOM = height - 45
-		self.LEFT = 0
-		self.RIGHT = width - 45 
-
-	def move(self):
-		# global velocidadeBola
-
-		# if self.pos_x > self.RIGHT:
-		# 	self.pos_x += -velocidadeBola
-		# else:
-		# 	if self.pos_x > self.LEFT:
-		# 		self.pos_x += velocidadeBola
-
-		# ##################################
-
-		# if self.pos_y > self.BOTTOM:
-		# 	self.pos_y += -velocidadeBola
-		# else:
-		# 	if self.pos_y > self.TOP:
-		# 		self.pos_y += -velocidadeBola
-
-		return 0
-
-	def ballLoad(self, returnType):
-		self.ballFile = pygame.image.load("intro_ball.gif")
-		self.default_image_size = (45, 45)
-		self.ballObj = pygame.transform.scale(self.ballFile, self.default_image_size)
-		self.ballRectangle = self.ballObj.get_rect()
-
-		if returnType == 'obj':
-			return self.ballObj
-		if returnType == 'rect':
-			return self.ballRectangle
-
-	def blitBall(self):
-		# ballMove = self.move()
-		# ballX = ballMove[0]
-		# ballY = ballMove[1]
-		ballX = 0
-		ballY = 0
-
-		ballRectangle = self.ballLoad('rect').move(velocidadeBola)
-
-		tela.blit(self.ballLoad('obj'), 
-				  self.ballLoad('rect').get_rect(ballRectangle))
-		print('ballX = ', ballX)
-		print('ballY = ', ballY)
-		# return 0
-
-
+# class Bola:
+# 	tela = Tela()
 
 class Tabua:
 	tela = Tela()
@@ -129,8 +71,10 @@ class Tabua:
 		return print('No move');
 
 	def desenharTabua(self):
-		pygame.draw.rect(screen, white, [self.pos_x, self.pos_y, self.tamanhoW, self.tamanhoH])
+		tabua = pygame.Rect([self.pos_x, self.pos_y, self.tamanhoW, self.tamanhoH])
+		pygame.draw.rect(screen, white, tabua)
 		#Superficie de desenho, cor do retangulo, posXY, tamanhoWH
+		return tabua
 
 class GameConfig:
 	tabua = Tabua()
@@ -162,9 +106,10 @@ velocidadeX = 2
 velocidadeBola = [0.5, 0.5]
 
 ################################ main #########################
-bola = Bola(velocidadeBola)
+# bola = Bola(velocidadeBola)
 tela.iniciarTela()
 moveAct = 0;
+pontos = 0;
 
 speed = [2, 2]
 ball = pygame.image.load("intro_ball.gif")
@@ -179,15 +124,27 @@ while execucao:
 		moveAct = tabua.VerifyKey(event)
 		print(event)
 
+	#### VERIFICAÇÃO DE BORDAS ####
 	ballrect = ballrect.move(speed)
 	if ballrect.left < 0 or ballrect.right > width:
 		speed[0] = -speed[0]
 	if ballrect.top < 0 or ballrect.bottom > height:
 		speed[1] = -speed[1]
+
+	###############################
+	if ballrect.bottom > height:
+		pontos = pontos - 1
+		print(pontos)
+	#### -- #######################
+	tabuaRect = tabua.desenharTabua()
+	if tabuaRect.colliderect(ballrect):
+		speed[1] = -speed[1]
+	
+
 	tela.pintarFundo()	
 	tabua.desenharTabua()
 	gameConfig.VerifyBorder()
-	# bola.blitBall()
+
 	tabua.move(moveAct)
 	screen.blit(ball, ballrect)
 	tela.atualizarTela()
