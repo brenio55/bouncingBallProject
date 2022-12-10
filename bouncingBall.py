@@ -48,14 +48,14 @@ class Tabua:
 		if movement == 'L':
 			pos_y = height / 2 + (height / 4)
 			self.pos_x += -velocidadeX
-			print('VelX L = ', velocidadeX)
-			print('pos_x = ', self.pos_x)
+			# print('VelX L = ', velocidadeX)
+			# print('pos_x = ', self.pos_x)
 
 		if movement == 'R':
 			pos_y = height / 2 + (height / 4)
 			self.pos_x += velocidadeX
-			print('VelX R = ', velocidadeX)
-			print('pos_x = ', self.pos_x)
+			# print('VelX R = ', velocidadeX)
+			# print('pos_x = ', self.pos_x)
 
 		if movement == 0:
 			pos_y = height / 2 + (height / 4)
@@ -68,7 +68,7 @@ class Tabua:
 			if event.key == pygame.K_RIGHT:
 				return 'R'
 
-		return print('No move');
+		# return print('No move');
 
 	def desenharTabua(self):
 		tabua = pygame.Rect([self.pos_x, self.pos_y, self.tamanhoW, self.tamanhoH])
@@ -96,6 +96,9 @@ class GameConfig:
 ## end classes
 
 # definindo objetos
+
+GetFontSystem = pygame.font.SysFont('Consolas', 18)
+
 tabua = Tabua()
 tela = Tela()
 gameConfig = GameConfig()
@@ -122,7 +125,7 @@ while execucao:
 	for event in pygame.event.get():
 		gameConfig.VerifyQuit(event)
 		moveAct = tabua.VerifyKey(event)
-		print(event)
+		# print(event)
 
 	#### VERIFICAÇÃO DE BORDAS ####
 	ballrect = ballrect.move(speed)
@@ -131,7 +134,7 @@ while execucao:
 	if ballrect.top < 0 or ballrect.bottom > height:
 		speed[1] = -speed[1]
 
-	###############################
+	#### ANOTAÇÃO DOS PONTOS NEGATIVOS ######
 	if ballrect.bottom > height:
 		pontos = pontos - 1
 		print(pontos)
@@ -139,13 +142,20 @@ while execucao:
 	tabuaRect = tabua.desenharTabua()
 	if tabuaRect.colliderect(ballrect):
 		speed[1] = -speed[1]
+		pontos = pontos + 1 #anotação dos pontos positivos
+		print(pontos)
 	
 
 	tela.pintarFundo()	
+	## escreve pontos na tela:
+	pontosStr = 'Pontos = ' + str(pontos)
+	pontosRenderObj = pygame.font.Font.render(GetFontSystem, pontosStr, False, white)
+
 	tabua.desenharTabua()
 	gameConfig.VerifyBorder()
 
 	tabua.move(moveAct)
+	screen.blit(pontosRenderObj, [0,0])
 	screen.blit(ball, ballrect)
 	tela.atualizarTela()
 	clock.tick(200)
