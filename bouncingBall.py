@@ -17,10 +17,7 @@ width = 640
 height = 480
 screen = pygame.display.set_mode((width, height))
 
-class Tela:		
-		
-	
-
+class Tela:	
 	def blit(self, surface, location):
 		screen.blit(surface, location)
 
