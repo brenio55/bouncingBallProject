@@ -1,4 +1,1 @@
-Existem 2 bugs acontecendo
-
-1- A tecla não pode ser pressionada e despressionada rápido demais, caso contrário a tábua para de se mexer (pode ser problema de hardware, segundo a internet)
-2- A bola fica deslizando na tábua quando ela pega na parte lateral da mesma.
+1- A tábua ficar deslizando na tábua agora é o bônus do jogo.

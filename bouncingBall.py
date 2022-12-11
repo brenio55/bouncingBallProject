@@ -2,10 +2,6 @@ import pygame
 clock = pygame.time.Clock()
 
 white = (255, 255, 255)
-black = (0, 0, 0)
-red = (255, 0, 0)
-green = (0, 255, 0)
-blue = (0, 0, 255)
 
 try:
 	pygame.init()
@@ -24,14 +20,11 @@ class Tela:
 	def iniciarTela(self):		
 		pygame.display.set_caption("Bouncing Ball")
 
-	def pintarFundo(self):
-		screen.fill(blue)
+	def pintarFundo(self, colorLevel=(0, 0, 255)):
+		screen.fill(colorLevel)
 
 	def atualizarTela(self):
 		pygame.display.flip()
-
-# class Bola:
-# 	tela = Tela()
 
 class Tabua:
 	tela = Tela()
@@ -82,7 +75,7 @@ class GameConfig:
 			execucao = False
 			pygame.quit()
 
-	def VerifyBorder(self):
+	def VerifyBorderTabua(self):
 		##DEFINIÇÃO DAS BORDAS para a TÁBUA
 		if tabua.pos_x > width - tabua.tamanhoW:
 			print('verificado direito')
@@ -90,21 +83,27 @@ class GameConfig:
 		if tabua.pos_x < 0:
 			print('verificado esquerdo')
 			tabua.pos_x = 0
+
 ## end classes
-
 # definindo objetos
-
-GetFontSystem = pygame.font.SysFont('Consolas', 18)
-
 tabua = Tabua()
 tela = Tela()
 gameConfig = GameConfig()
 #variaveis de execução
-
+GetFontSystem = pygame.font.SysFont('Consolas', 18)
 execucao = True
 velocidadeX = 2
 velocidadeBola = [0.5, 0.5]
-
+colorLevel = { ##Dictionary Type
+	"0" : (0, 0, 255), ## 0 BLUE
+	"1" : (0, 255, 0), ## 1 GREEN
+	"2" : (255, 0, 0), ## 2 RED
+	"3" : (255, 150, 0), ## 3 ORANGE
+	"4" : (255, 150, 150), ## 4 PINK
+	"5" : (255, 255, 50), ## 5 YELLOW
+	"6" : (0, 0, 0) ## 6 BLACK
+}
+levelNumber = "1"
 ################################ main #########################
 # bola = Bola(velocidadeBola)
 tela.iniciarTela()
@@ -117,24 +116,31 @@ default_image_size = (45, 45)
 ball = pygame.transform.scale(ball, default_image_size)
 ballrect = ball.get_rect()
 
+niveis = ["NÍVEL 0", ##0
+		  "NÍVEL 1", ##1
+		  "NÍVEL 2", ##2
+		  "NÍVEL 3", ##3
+		  "NÍVEL 4", ##4
+		  "NÍVEL 5", ##5
+		  "NÍVEL 6"] ##6 #List Type
 
-pontosStrNivel = 'NÍVEL 1. --- VEL_TABUA = 2 --- VEL_BOLA = 200 --- PONTOS A PERDER: -5 '
+pontosStrNivel = niveis[0] + ' --- VEL_TABUA = 2 --- VEL_BOLA = 200 --- PONTOS A PERDER: -5 '
 pontosRenderObjNivel = pygame.font.Font.render(GetFontSystem, pontosStrNivel, False, white)
 
-while execucao:
-	for event in pygame.event.get():
-		gameConfig.VerifyQuit(event)
-		moveAct = tabua.VerifyKey(event)
-		# print(event)
+def verifyBorderBall():
+	global ballrect
+	global speed
 
-	#### VERIFICAÇÃO DE BORDAS ####
 	ballrect = ballrect.move(speed)
 	if ballrect.left < 0 or ballrect.right > width:
 		speed[0] = -speed[0]
 	if ballrect.top < 0 or ballrect.bottom > height:
 		speed[1] = -speed[1]
 
-	#### ANOTAÇÃO DOS PONTOS NEGATIVOS ######
+def negativePointsNotation():
+	global ballrect
+	global pontos
+
 	if ballrect.bottom > height:
 		if pontos < 20: ##NIVEL 1
 			pontos = pontos - 5
@@ -163,43 +169,71 @@ while execucao:
 		if pontos > 1000 and pontos < 2000: ##NIVEL 7
 			pontos = pontos - 700
 			print(pontos)
-	#### -- #######################
-	######### ANOTAÇÃO DE NIVEL ##########
+
+def levelNotation():
+	global pontosStr
+	global pontosRenderObjNivel
+	global velocidadeBola
+	global velocidadeX
+	global levelNumber
+
 	if pontos < 20: 
-		pontosStrNivel = 'NÍVEL 1. --- VEL_TABUA = 2 --- VEL_BOLA = 200 --- PONTOS A PERDER: -5 '
+		pontosStrNivel = niveis[0] + ' --- VEL_TABUA = 2 --- VEL_BOLA = 200 --- PONTOS A PERDER: -5 '
 		pontosRenderObjNivel = pygame.font.Font.render(GetFontSystem, pontosStrNivel, False, white)			
 		velocidadeX = 2
-		velocidadeBola = clock.tick(velocidadeX * 100)
+		velocidadeBola = clock.tick(200)
+		levelNumber = str(velocidadeX - 2)
 	if pontos > 20 and pontos < 100:
-		pontosStrNivel = 'NÍVEL 2. --- VEL_TABUA = 3 --- VEL_BOLA = 300 --- PONTOS A PERDER: -30 '
+		pontosStrNivel = niveis[1] + ' --- VEL_TABUA = 3 --- VEL_BOLA = 220 --- PONTOS A PERDER: -30 '
 		pontosRenderObjNivel = pygame.font.Font.render(GetFontSystem, pontosStrNivel, False, white)
 		velocidadeX = 3
-		velocidadeBola = clock.tick(velocidadeX * 100)
+		velocidadeBola = clock.tick(220)
+		levelNumber = str(velocidadeX - 2)
 	if pontos > 100 and pontos < 200:
-		pontosStrNivel = 'NÍVEL 3. --- VEL_TABUA = 4 --- VEL_BOLA = 400 --- PONTOS A PERDER: -70 '
+		pontosStrNivel = niveis[2] + ' --- VEL_TABUA = 4 --- VEL_BOLA = 240 --- PONTOS A PERDER: -70 '
 		pontosRenderObjNivel = pygame.font.Font.render(GetFontSystem, pontosStrNivel, False, white)
 		velocidadeX = 4
-		velocidadeBola = clock.tick(velocidadeX * 100)
+		velocidadeBola = clock.tick(240)
+		levelNumber = str(velocidadeX - 2)
 	if pontos > 200 and pontos < 400:
-		pontosStrNivel = 'NÍVEL 4. --- VEL_TABUA = 5 --- VEL_BOLA = 500 --- PONTOS A PERDER: -150 '
+		pontosStrNivel = niveis[3] + ' --- VEL_TABUA = 5 --- VEL_BOLA = 260 --- PONTOS A PERDER: -150 '
 		pontosRenderObjNivel = pygame.font.Font.render(GetFontSystem, pontosStrNivel, False, white)
 		velocidadeX = 5
-		velocidadeBola = clock.tick(velocidadeX * 100)
+		velocidadeBola = clock.tick(260)
+		levelNumber = str(velocidadeX - 2)
 	if pontos > 400 and pontos < 800:
-		pontosStrNivel = 'NÍVEL 5. --- VEL_TABUA = 6 --- VEL_BOLA = 600 --- PONTOS A PERDER: -350'
+		pontosStrNivel = niveis[4] + ' --- VEL_TABUA = 6 --- VEL_BOLA = 280 --- PONTOS A PERDER: -350'
 		pontosRenderObjNivel = pygame.font.Font.render(GetFontSystem, pontosStrNivel, False, white)
 		velocidadeX = 6
-		velocidadeBola = clock.tick(velocidadeX * 100)
+		velocidadeBola = clock.tick(280)
+		levelNumber = str(velocidadeX - 2)
 	if pontos > 800 and pontos < 1000:
-		pontosStrNivel = 'NÍVEL 6. --- VEL_TABUA = 7 --- VEL_BOLA = 700 --- PONTOS A PERDER: -500'
+		pontosStrNivel = niveis[5] + ' --- VEL_TABUA = 7 --- VEL_BOLA = 300 --- PONTOS A PERDER: -500'
 		pontosRenderObjNivel = pygame.font.Font.render(GetFontSystem, pontosStrNivel, False, white)
 		velocidadeX = 7
-		velocidadeBola = clock.tick(velocidadeX * 100)
+		velocidadeBola = clock.tick(300)
+		levelNumber = str(velocidadeX - 2)
 	if pontos > 1000 and pontos < 2000:
-		pontosStrNivel = 'NÍVEL 7. --- VEL_TABUA = 7 --- VEL_BOLA = 800 --- PONTOS A PERDER: -700'
+		pontosStrNivel = niveis[6] + ' --- VEL_TABUA = 7 --- VEL_BOLA = 320 --- PONTOS A PERDER: -700'
 		pontosRenderObjNivel = pygame.font.Font.render(GetFontSystem, pontosStrNivel, False, white)
 		velocidadeX = 8
-		velocidadeBola = clock.tick(velocidadeX * 100)
+		velocidadeBola = clock.tick(320)
+		levelNumber = str(velocidadeX - 2)
+
+
+
+while execucao:
+	for event in pygame.event.get():
+		gameConfig.VerifyQuit(event)
+		moveAct = tabua.VerifyKey(event)
+		# print(event)
+
+	verifyBorderBall()
+
+	negativePointsNotation()
+	
+	levelNotation()
+	
 
 	tabuaRect = tabua.desenharTabua()
 	if tabuaRect.colliderect(ballrect):
@@ -208,13 +242,13 @@ while execucao:
 		print(pontos)
 	
 
-	tela.pintarFundo()	
+	tela.pintarFundo(colorLevel[levelNumber])	
 	## escreve pontos na tela:
 	pontosStr = 'Pontos = ' + str(pontos)
 	pontosRenderObj = pygame.font.Font.render(GetFontSystem, pontosStr, False, white)
 
 	tabua.desenharTabua()
-	gameConfig.VerifyBorder()
+	gameConfig.VerifyBorderTabua()
 
 	tabua.move(moveAct)
 	screen.blit(pontosRenderObj, [0,0])
